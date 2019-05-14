@@ -18,8 +18,9 @@ x_train = np.load(config_parser.get('DataPath', 'x_train_path'))
 y_train = np.load(config_parser.get('DataPath', 'y_train_path'))
 x_test = np.load(config_parser.get('DataPath', 'x_test_path'))
 y_test = np.load(config_parser.get('DataPath', 'y_test_path'))
+model_path = np.load(config_parser.get('DataPath', 'model_path'))
 
-model = load_model('model.h5')
+model = load_model(model_path)
 model.summary()
 
 score = model.evaluate(x_test, y_test)
