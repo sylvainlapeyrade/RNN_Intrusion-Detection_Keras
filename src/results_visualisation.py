@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import confusion_matrix
 import tensorflow as tf
 from keras.optimizers import Adam, SGD
-from tensorflow.keras.models import load_model
+from tensorflow.python.keras.models import load_model
 import matplotlib.pyplot as plt
 
 # config = tf.ConfigProto()
@@ -18,7 +18,6 @@ x_train = np.load(config_parser.get('DataPath', 'x_train_path'))
 y_train = np.load(config_parser.get('DataPath', 'y_train_path'))
 x_test = np.load(config_parser.get('DataPath', 'x_test_path'))
 y_test = np.load(config_parser.get('DataPath', 'y_test_path'))
-model_path = np.load(config_parser.get('DataPath', 'model_path'))
 
 model = load_model(model_path)
 model.summary()
