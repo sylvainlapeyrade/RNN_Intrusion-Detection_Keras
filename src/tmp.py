@@ -28,6 +28,6 @@ model.add(Dense(units=5, activation='sigmoid'))  # Nb sortie et fct activation
 
 model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
-# Entrainement du modele: x: entrées, y:sorties, epochs : Nb itération
-# Validation_data: données de test
+# Entrainement du modele: x: données en entrée, y: données en sortie
+# Validation_data: données de test | epochs : Nb parcours du dataset x
 model.fit(x=x_train, y=y_train, epochs=20, validation_data=(x_test, y_test))
