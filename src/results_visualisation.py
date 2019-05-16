@@ -19,14 +19,14 @@ y_train = np.load(config_parser.get('DataPath', 'y_train_path'))
 x_test = np.load(config_parser.get('DataPath', 'x_test_path'))
 y_test = np.load(config_parser.get('DataPath', 'y_test_path'))
 
-model = load_model(model_path)
+model = load_model('./models/rmsprop_20_full_8p.model')
 model.summary()
 
-score = model.evaluate(x_test, y_test)
+score = model.evaluate(x_train, y_train)
 # tn, fp, fn, tp = confusion_matrix(y_test.argmax(axis=1), y_pred.argmax(axis=1)).ravel()
 
-y_pred = model.predict(x_test, verbose=1)
-matrix = confusion_matrix(y_test.argmax(axis=1), y_pred.argmax(axis=1))
+y_pred = model.predict(x_train, verbose=1)
+matrix = confusion_matrix(y_train.argmax(axis=1), y_pred.argmax(axis=1))
 print(matrix)
 
 # print("\nTest score:", score[0])

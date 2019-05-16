@@ -135,14 +135,14 @@ def process_dataframe(dataframe, name):
     for i in range(y.shape[0]):
         if y[i] == 0:
             y_one_hot[i, 0] = 1
+        elif y[i] == 1:
+            y_one_hot[i, 1] = 1
         elif y[i] == 2:
             y_one_hot[i, 2] = 1
         elif y[i] == 3:
             y_one_hot[i, 3] = 1
         elif y[i] == 4:
             y_one_hot[i, 4] = 1
-        elif y[i] == 5:
-            y_one_hot[i, 5] = 1
 
     # Standardise les donnees en les centrant et les mettant à l'echelle
     # à partir de la moyenne et de l'écart-type
@@ -154,7 +154,6 @@ def process_dataframe(dataframe, name):
     X, Y = x[:total_data_length, :], y_one_hot[:total_data_length, :]
 
     return X, Y
-
 
 x_train, y_train = process_dataframe(train_dataframe, 'entrainement')
 x_test, y_test = process_dataframe(test_dataframe, 'test')
