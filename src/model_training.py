@@ -28,8 +28,7 @@ optimizer = config_parser.get('Parameters', 'optimizer')
 epochs = config_parser.get('Parameters', 'epochs')
 loss = config_parser.get('Parameters', 'loss')
 
-path = loss + '_' + optimizer + '_' + \
-    epochs + 'e_10p_8f_2l_128u_' + str(time())
+path = '_' + optimizer + '_' + epochs + 'e_10p_8f_2l_128u_' + str(time())
 
 # Réglages Tensorboard
 log_path = config_parser.get('DataPath', 'log_path')
@@ -54,8 +53,7 @@ model.add(Dropout(rate=0.1))
 model.add(Dense(units=5, activation='sigmoid'))
 
 # Loss the objective that the model will try to minimize
-model.compile(loss='mean_squared_error', optimizer='adam',
-              metrics=['accuracy'])
+model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
 model.summary()
 
