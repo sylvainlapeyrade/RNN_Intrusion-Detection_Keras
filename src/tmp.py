@@ -30,4 +30,4 @@ model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
 # Entrainement du modele: x: entrées, y:sorties, epochs : Nb itération
 # Validation_data: données de test
-model.fit(x=x_train, y=y_train, epochs=5, validation_data=(x_test, y_test))
+model.fit(x=x_train, y=y_train, epochs=20, validation_data=(x_test, y_test))

@@ -7,13 +7,12 @@ from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, CuDNNLSTM
 from keras.optimizers import Adam, SGD
-
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
+
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 set_session(tf.Session(config=config))
-
 
 print("Chargement des donnees...")
 # Chargements des donnees du fichiers de configuration
@@ -32,10 +31,8 @@ path = '_' + optimizer + '_' + epochs + 'e_10p_8f_2l_128u_' + str(time())
 
 # Réglages Tensorboard
 log_path = config_parser.get('DataPath', 'log_path')
-log_path += path
-print("Fichier de log Tensorboard: ", log_path)
-tensorboard = TensorBoard(log_path)
-
+print("Fichier de log Tensorboard: ", log_path+path)
+tensorboard = TensorBoard(log_path+path)
 
 print("Creation du modele...")
 model = Sequential()  # Pile lineaire de couches
@@ -69,6 +66,5 @@ print(matrix)
 
 # Réglages sauvegarde modèle
 model_path = config_parser.get('DataPath', 'model_path')
-model_path += path + ".model"
-model.save(model_path)
-print("Modele enregistre: ", model_path)
+model.save(model_path+path)
+print("Modele enregistre: ", model_path+path)
