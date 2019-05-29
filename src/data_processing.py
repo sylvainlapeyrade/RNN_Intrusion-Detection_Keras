@@ -1,37 +1,36 @@
 import configparser as cp
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import OrdinalEncoder, StandardScaler, LabelEncoder
+from sklearn.feature_selection import VarianceThreshold
 import warnings
-pd.options.mode.chained_assignment = None
-warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action='ignore')
 
 # Nom et description des features: kdd.ics.uci.edu/databases/kddcup99/task.html
-feature_name = ["duration", "protocol_type", "service", "flag", "src_bytes",
-                "dst_bytes", "land", "wrong_fragment", "urgent", "hot",
-                "num_failed_logins", "logged_in", "num_compromised",
-                "root_shell", "su_attempted", "num_root", "num_file_creations",
-                "num_shells", "num_access_files", "num_outbound_cmds",
-                "is_host_login", "is_guest_login", "count", "srv_count",
-                "serror_rate", "srv_serror_rate", "rerror_rate",
-                "srv_rerror_rate", "same_srv_rate", "diff_srv_rate",
-                "srv_diff_host_rate", "dst_host_count", "dst_host_srv_count",
-                "dst_host_same_srv_rate", "dst_host_diff_srv_rate",
-                "dst_host_same_src_port_rate", "dst_host_srv_diff_host_rate",
-                "dst_host_serror_rate", "dst_host_srv_serror_rate",
-                "dst_host_rerror_rate", "dst_host_srv_rerror_rate", "label"]
+full_features = ["duration", "protocol_type", "service", "flag", "src_bytes",
+                 "dst_bytes", "land", "wrong_fragment", "urgent", "hot",
+                 "num_failed_logins", "logged_in", "num_compromised",
+                 "root_shell", "su_attempted", "num_root", "num_file_creations",
+                 "num_shells", "num_access_files", "num_outbound_cmds",
+                 "is_host_login", "is_guest_login", "count", "srv_count",
+                 "serror_rate", "srv_serror_rate", "rerror_rate",
+                 "srv_rerror_rate", "same_srv_rate", "diff_srv_rate",
+                 "srv_diff_host_rate", "dst_host_count", "dst_host_srv_count",
+                 "dst_host_same_srv_rate", "dst_host_diff_srv_rate",
+                 "dst_host_same_src_port_rate", "dst_host_srv_diff_host_rate",
+                 "dst_host_serror_rate", "dst_host_srv_serror_rate",
+                 "dst_host_rerror_rate", "dst_host_srv_rerror_rate", "label"]
 
 # On ne garde que quelques features utiles en accord avec l'article: "Applying
 #  long short-term memory recurrent neural networks to intrusion detection"
-# Les 4 premières feature sont les plus importantes avec 4 autres et le label
-useful_features_label = ['service', 'src_bytes', 'dst_host_diff_srv_rate',
-                         'dst_host_rerror_rate', 'dst_bytes', 'hot',
-                         'num_failed_logins', 'dst_host_srv_count', 'label']
+# Les 4 features les plus importantes + label
+four_features = ['service', 'src_bytes', 'dst_host_diff_srv_rate',
+                 'dst_host_rerror_rate', 'label']
 
-# Les 8 features utiles sans la feature label
-useful_features = ['service', 'src_bytes', 'dst_host_diff_srv_rate',
-                   'dst_host_rerror_rate', 'dst_bytes', 'hot',
-                   'num_failed_logins', 'dst_host_srv_count']
+# Les 8 feature les plus importantes + label
+eight_features = ['service', 'src_bytes', 'dst_host_diff_srv_rate',
+                  'dst_host_rerror_rate', 'dst_bytes', 'hot',
+                  'num_failed_logins', 'dst_host_srv_count', 'label']
 
 # Type d'attaque: kdd.ics.uci.edu/databases/kddcup99/training_attack_types
 probe = ['ipsweep.', 'nmap.', 'portsweep.', 'satan.', 'saint.', 'mscan.']
@@ -57,6 +56,10 @@ service_values = ['http', 'smtp', 'finger', 'domain_u', 'auth', 'telnet',
                   'tim_i', 'red_i', 'icmp', 'http_2784', 'harvest', 'aol',
                   'http_8001']
 
+flag_values = ['OTH', 'RSTOS0', 'SF', 'SH', 'RSTO', 'S2', 'S1', 'REJ', 'S3', 'RSTR', 'S0']
+
+protocol_type_values = ['tcp', 'udp', 'icmp']
+
 # Chargement des datasets
 config_parser = cp.ConfigParser()
 config_parser.read('./config.ini')
@@ -68,14 +71,13 @@ print('Chargement du dataset de test : {}...'
 # On parse le dataset en format csv avec Pandas et attribut à chaque colonne
 # le nom de la feature, on obtient alors un dataframe (equivaut à une matrice)
 train_dataframe = pd.read_csv(config_parser.get(
-    'DataPath', 'train_data_path'), names=feature_name)
+    'DataPath', 'train_data_path'), names=full_features)
 test_dataframe = pd.read_csv(config_parser.get(
-    'DataPath', 'test_data_path'), names=feature_name)
+    'DataPath', 'test_data_path'), names=full_features)
 
-
-def process_dataframe(dataframe, name):
+def process_dataframe(dataframe, name, features_number):
     # Réduit le dataframe en ne conservant que les features "utiles"
-    dataframe = dataframe[useful_features_label]
+    dataframe = dataframe[features_number]
 
     # Récupère le nombre de chaque type de données pour afficher des stats
     total_data_length = len(dataframe)
@@ -88,10 +90,10 @@ def process_dataframe(dataframe, name):
                       round(attack_lengh * 100 / total_data_length, 3))
               .replace(',', ' '))
 
-    print('\nDataset {}:'.format(name))
-    print('Total Entrees: {:,}'.format(total_data_length).replace(',', ' '))
-    print_data("Entrees normales", normal_data_length)
-    print_data("Entrees anormales", anormal_data_length)
+    print('\nJeu de données {}:'.format(name))
+    print('Total Entrées: {:,}'.format(total_data_length).replace(',', ' '))
+    print_data("Entrées normales", normal_data_length)
+    print_data("Entrées anormales", anormal_data_length)
 
     # Assigne numero différent selon la nature de la connexion
     dataframe.loc[dataframe['label'] == 'normal.', 'label'] = 0
@@ -112,55 +114,57 @@ def process_dataframe(dataframe, name):
 
     print("Dont:")
     print_data("Probe", probe_data_length)
-    print_data("DoS", dos_data_length)
+    print_data("DoS", dos_data_length)  
     print_data("U2R", u2r_data_length)
     print_data("R2L", r2l_data_length)
 
-    # # Ajoute chaque nouvelle valeur de service dans la liste
-    # for i in range(len(dataframe['service'])):
-    #     if dataframe['service'][i] not in service_values:
-    #         service_values.append(dataframe['service'][i])
-
-    # Convertit la valeur du service en integer en focntion de sa position
-    for i in range(len(service_values)):
-        dataframe.loc[dataframe['service'] == service_values[i], 'service'] = i
-
     # Création des tableaux d'entrées X et de sortie y
-    x = np.array(dataframe[useful_features])
-    y = np.array(dataframe['label'])
+    x = dataframe[features_number[:-1]]
+    y = dataframe['label']
+    
+    if 'service' in features_number:
+        for i in range(len(service_values)):
+            x.loc[x['service'] == service_values[i], 'service'] = i
 
+    if 'protocol_type' in features_number:
+        for i in range(len(protocol_type_values)):
+            x.loc[x['protocol_type'] == protocol_type_values[i], 'protocol_type'] = i
+
+    if 'flag' in features_number:
+        for i in range(len(flag_values)):
+            x.loc[x['flag'] == flag_values[i], 'flag'] = i
+
+    # Standardise en centrant les données par rapport à la moyenne et l'écart type 
+    x = StandardScaler().fit_transform(x)
+
+    return np.array(x), y
+
+x_train, Y_train = process_dataframe(train_dataframe, 'entrainement', eight_features)
+x_test, Y_test = process_dataframe(test_dataframe, 'test', eight_features)
+
+
+def oneHotEncoding(y_label_encoded):
     # Encodage one-hot de y (=> valeur 0 ou 1)
-    # Tensorflow n'accepte que des labels encodés one-hot
-    y_one_hot = np.zeros([y.shape[0], 5])
-    for i in range(y.shape[0]):
-        if y[i] == 0:
+    y_one_hot = np.zeros([y_label_encoded.shape[0], 5])
+    for i in range(y_label_encoded.shape[0]):
+        if y_label_encoded[i] == 0:
             y_one_hot[i, 0] = 1
-        elif y[i] == 1:
+        elif y_label_encoded[i] == 1:
             y_one_hot[i, 1] = 1
-        elif y[i] == 2:
+        elif y_label_encoded[i] == 2:
             y_one_hot[i, 2] = 1
-        elif y[i] == 3:
+        elif y_label_encoded[i] == 3:
             y_one_hot[i, 3] = 1
-        elif y[i] == 4:
+        elif y_label_encoded[i] == 4:
             y_one_hot[i, 4] = 1
+    return y_one_hot
 
-    # Standardise les donnees en les centrant et les mettant à l'echelle
-    # à partir de la moyenne et de l'écart-type
-    standardScaler = StandardScaler()
-    standardScaler.fit(x)
-    x = standardScaler.transform(x)
-    x = x.reshape([-1, x.shape[1], 1])
+y_train = oneHotEncoding(Y_train)
+y_test = oneHotEncoding(Y_test)
 
-    X, Y = x[:total_data_length, :], y_one_hot[:total_data_length, :]
-
-    return X, Y
-
-x_train, y_train = process_dataframe(train_dataframe, 'entrainement')
-x_test, y_test = process_dataframe(test_dataframe, 'test')
-
-np.save(config_parser.get('DataPath', 'x_train_path'), x_train)
+np.save(config_parser.get('DataPath', 'x_train_path'), x_train.reshape([-1, x_train.shape[1], 1]))
 np.save(config_parser.get('DataPath', 'y_train_path'), y_train)
-np.save(config_parser.get('DataPath', 'x_test_path'), x_test)
+np.save(config_parser.get('DataPath', 'x_test_path'), x_test.reshape([-1, x_test.shape[1], 1]))
 np.save(config_parser.get('DataPath', 'y_test_path'), y_test)
 
 print("\nEnregistrement des datasets fini.")

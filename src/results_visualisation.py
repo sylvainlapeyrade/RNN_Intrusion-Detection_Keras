@@ -1,16 +1,16 @@
 import configparser as cp
-import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, roc_auc_score, precision_score, roc_curve, recall_score, auc
 import tensorflow as tf
-from keras.optimizers import Adam, SGD
+from keras.optimizers import Adam
 from tensorflow.python.keras.models import load_model
+from keras.backend.tensorflow_backend import set_session
 import matplotlib.pyplot as plt
 
-# config = tf.ConfigProto()
-# config.gpu_options.allow_growth = True
-# sess = tf.Session(config=config)
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+set_session(tf.Session(config=config))
 
 config_parser = cp.ConfigParser()
 config_parser.read('./config.ini')
@@ -19,34 +19,48 @@ y_train = np.load(config_parser.get('DataPath', 'y_train_path'))
 x_test = np.load(config_parser.get('DataPath', 'x_test_path'))
 y_test = np.load(config_parser.get('DataPath', 'y_test_path'))
 
-model = load_model('./models/rmsprop_20_full_8p.model')
+model = load_model(
+    './models/sigmoid_adam_50e_10p_4f_2l_128u_1558611586.1086195')
 model.summary()
 
-score = model.evaluate(x_train, y_train)
-# tn, fp, fn, tp = confusion_matrix(y_test.argmax(axis=1), y_pred.argmax(axis=1)).ravel()
+score = model.evaluate(x_test, y_test, batch_size=1024)
+y_pred = model.predict(x_test, batch_size=1024)
 
-y_pred = model.predict(x_train, verbose=1)
-matrix = confusion_matrix(y_train.argmax(axis=1), y_pred.argmax(axis=1))
-print(matrix)
+print('\Matrice de confusion:')
+confusion_matrix = confusion_matrix(
+    y_test.argmax(axis=1), y_pred.argmax(axis=1))
+print(confusion_matrix)
 
-# print("\nTest score:", score[0])
-# print('Test accuracy:', score[1])
+FP = confusion_matrix.sum(axis=0) - np.diag(confusion_matrix)
+FN = confusion_matrix.sum(axis=1) - np.diag(confusion_matrix)
+TP = np.diag(confusion_matrix)
+TN = confusion_matrix.sum() - (FP + FN + FP)
 
-# # list all data in history
-# print(history.history.keys())
-# # summarize history for accuracy
-# plt.plot(history.history['acc'])
-# plt.plot(history.history['val_acc'])
-# plt.title('model accuracy')
-# plt.ylabel('accuracy')
-# plt.xlabel('epoch')
-# plt.legend(['train', 'test'], loc='upper left')
-# plt.show()
-# # summarize history for loss
-# plt.plot(history.history['loss'])
-# plt.plot(history.history['val_loss'])
-# plt.title('model loss')
-# plt.ylabel('loss')
-# plt.xlabel('epoch')
-# plt.legend(['train', 'test'], loc='upper left')
-# plt.show()
+print('\nTPR:')
+print(TP/(TP+FN))
+print('\nFPR:')
+print(FP/(FP+TN))
+
+# Matrice de coût tel que présenté dans l'article
+cost_matrix = [[0, 1, 2, 2, 2],
+               [1, 0, 2, 2, 2],
+               [2, 1, 0, 2, 2],
+               [4, 2, 2, 0, 2],
+               [4, 2, 2, 2, 0]]
+
+tmp_matrix = np.zeros((5, 5))
+
+for i in range(5):
+    for j in range(5):
+        tmp_matrix[i][j] = confusion_matrix[i][j] * cost_matrix[i][j]
+
+# The average cost is (total cost / total number of classifications)
+print('\nCost:')
+print(tmp_matrix.sum()/confusion_matrix.sum())
+
+print('\nAUC:')
+print(roc_auc_score(y_true=y_test, y_score=y_pred, average='micro'))
+
+print('\nPrecision:')
+print(precision_score(y_true=y_test.argmax(axis=1),
+                      y_pred=y_pred.argmax(axis=1), average=None))
