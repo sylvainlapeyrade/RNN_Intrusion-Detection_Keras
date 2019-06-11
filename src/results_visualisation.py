@@ -1,12 +1,12 @@
+from keras.backend.tensorflow_backend import set_session
+import matplotlib.pyplot as plt
+from tensorflow._api.v1.keras.models import load_model
+import tensorflow as tf
 import configparser as cp
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import confusion_matrix, roc_auc_score, precision_score, roc_curve, recall_score, auc
-import tensorflow as tf
-from keras.optimizers import Adam
-from tensorflow.python.keras.models import load_model
-from keras.backend.tensorflow_backend import set_session
-import matplotlib.pyplot as plt
+from sklearn.metrics import (confusion_matrix, roc_auc_score, precision_score,
+                             roc_curve, recall_score, auc)
 
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
@@ -20,13 +20,13 @@ x_test = np.load(config_parser.get('DataPath', 'x_test_path'))
 y_test = np.load(config_parser.get('DataPath', 'y_test_path'))
 
 model = load_model(
-    './models/sigmoid_adam_50e_10p_4f_2l_128u_1558611586.1086195')
+    './models/sigmoid_adam_50e_10p_4f_2l_128u_1559832818.8302574')
 model.summary()
 
 score = model.evaluate(x_test, y_test, batch_size=1024)
 y_pred = model.predict(x_test, batch_size=1024)
 
-print('\Matrice de confusion:')
+print('\nMatrice de confusion:')
 confusion_matrix = confusion_matrix(
     y_test.argmax(axis=1), y_pred.argmax(axis=1))
 print(confusion_matrix)
@@ -59,7 +59,7 @@ print('\nCost:')
 print(tmp_matrix.sum()/confusion_matrix.sum())
 
 print('\nAUC:')
-print(roc_auc_score(y_true=y_test, y_score=y_pred, average='micro'))
+print(roc_auc_score(y_true=y_test, y_score=y_pred, average=None))
 
 print('\nPrecision:')
 print(precision_score(y_true=y_test.argmax(axis=1),

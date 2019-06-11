@@ -1,8 +1,7 @@
 import configparser as cp
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import OrdinalEncoder, StandardScaler, LabelEncoder
-from sklearn.feature_selection import VarianceThreshold
+from sklearn.preprocessing import StandardScaler
 import warnings
 warnings.simplefilter(action='ignore')
 
@@ -10,16 +9,17 @@ warnings.simplefilter(action='ignore')
 full_features = ["duration", "protocol_type", "service", "flag", "src_bytes",
                  "dst_bytes", "land", "wrong_fragment", "urgent", "hot",
                  "num_failed_logins", "logged_in", "num_compromised",
-                 "root_shell", "su_attempted", "num_root", "num_file_creations",
-                 "num_shells", "num_access_files", "num_outbound_cmds",
-                 "is_host_login", "is_guest_login", "count", "srv_count",
-                 "serror_rate", "srv_serror_rate", "rerror_rate",
-                 "srv_rerror_rate", "same_srv_rate", "diff_srv_rate",
-                 "srv_diff_host_rate", "dst_host_count", "dst_host_srv_count",
-                 "dst_host_same_srv_rate", "dst_host_diff_srv_rate",
-                 "dst_host_same_src_port_rate", "dst_host_srv_diff_host_rate",
-                 "dst_host_serror_rate", "dst_host_srv_serror_rate",
-                 "dst_host_rerror_rate", "dst_host_srv_rerror_rate", "label"]
+                 "root_shell", "su_attempted", "num_root",
+                 "num_file_creations", "num_shells", "num_access_files",
+                 "num_outbound_cmds", "is_host_login", "is_guest_login",
+                 "count", "srv_count", "serror_rate", "srv_serror_rate",
+                 "rerror_rate", "srv_rerror_rate", "same_srv_rate",
+                 "diff_srv_rate", "srv_diff_host_rate", "dst_host_count",
+                 "dst_host_srv_count", "dst_host_same_srv_rate",
+                 "dst_host_diff_srv_rate", "dst_host_same_src_port_rate",
+                 "dst_host_srv_diff_host_rate", "dst_host_serror_rate",
+                 "dst_host_srv_serror_rate", "dst_host_rerror_rate",
+                 "dst_host_srv_rerror_rate", "label"]
 
 # On ne garde que quelques features utiles en accord avec l'article: "Applying
 #  long short-term memory recurrent neural networks to intrusion detection"
@@ -56,7 +56,8 @@ service_values = ['http', 'smtp', 'finger', 'domain_u', 'auth', 'telnet',
                   'tim_i', 'red_i', 'icmp', 'http_2784', 'harvest', 'aol',
                   'http_8001']
 
-flag_values = ['OTH', 'RSTOS0', 'SF', 'SH', 'RSTO', 'S2', 'S1', 'REJ', 'S3', 'RSTR', 'S0']
+flag_values = ['OTH', 'RSTOS0', 'SF', 'SH',
+               'RSTO', 'S2', 'S1', 'REJ', 'S3', 'RSTR', 'S0']
 
 protocol_type_values = ['tcp', 'udp', 'icmp']
 
@@ -74,6 +75,7 @@ train_dataframe = pd.read_csv(config_parser.get(
     'DataPath', 'train_data_path'), names=full_features)
 test_dataframe = pd.read_csv(config_parser.get(
     'DataPath', 'test_data_path'), names=full_features)
+
 
 def process_dataframe(dataframe, name, features_number):
     # Réduit le dataframe en ne conservant que les features "utiles"
@@ -114,32 +116,35 @@ def process_dataframe(dataframe, name, features_number):
 
     print("Dont:")
     print_data("Probe", probe_data_length)
-    print_data("DoS", dos_data_length)  
+    print_data("DoS", dos_data_length)
     print_data("U2R", u2r_data_length)
     print_data("R2L", r2l_data_length)
 
     # Création des tableaux d'entrées X et de sortie y
     x = dataframe[features_number[:-1]]
     y = dataframe['label']
-    
+
     if 'service' in features_number:
         for i in range(len(service_values)):
             x.loc[x['service'] == service_values[i], 'service'] = i
 
     if 'protocol_type' in features_number:
         for i in range(len(protocol_type_values)):
-            x.loc[x['protocol_type'] == protocol_type_values[i], 'protocol_type'] = i
+            x.loc[x['protocol_type'] ==
+                  protocol_type_values[i], 'protocol_type'] = i
 
     if 'flag' in features_number:
         for i in range(len(flag_values)):
             x.loc[x['flag'] == flag_values[i], 'flag'] = i
 
-    # Standardise en centrant les données par rapport à la moyenne et l'écart type 
+    # Standardise en centrant les données sur la moyenne et l'écart type
     x = StandardScaler().fit_transform(x)
 
     return np.array(x), y
 
-x_train, Y_train = process_dataframe(train_dataframe, 'entrainement', eight_features)
+
+x_train, Y_train = process_dataframe(
+    train_dataframe, 'entrainement', eight_features)
 x_test, Y_test = process_dataframe(test_dataframe, 'test', eight_features)
 
 
@@ -159,12 +164,15 @@ def oneHotEncoding(y_label_encoded):
             y_one_hot[i, 4] = 1
     return y_one_hot
 
+
 y_train = oneHotEncoding(Y_train)
 y_test = oneHotEncoding(Y_test)
 
-np.save(config_parser.get('DataPath', 'x_train_path'), x_train.reshape([-1, x_train.shape[1], 1]))
+np.save(config_parser.get('DataPath', 'x_train_path'),
+        x_train.reshape([-1, x_train.shape[1], 1]))
 np.save(config_parser.get('DataPath', 'y_train_path'), y_train)
-np.save(config_parser.get('DataPath', 'x_test_path'), x_test.reshape([-1, x_test.shape[1], 1]))
+np.save(config_parser.get('DataPath', 'x_test_path'),
+        x_test.reshape([-1, x_test.shape[1], 1]))
 np.save(config_parser.get('DataPath', 'y_test_path'), y_test)
 
 print("\nEnregistrement des datasets fini.")

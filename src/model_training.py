@@ -4,9 +4,10 @@ from keras.optimizers import Adam
 import configparser as cp
 import numpy as np
 from time import time
-from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, LSTM, CuDNNLSTM
+import pandas as pd
+from tensorflow._api.v1.keras.callbacks import TensorBoard, ModelCheckpoint
+from tensorflow._api.v1.keras.models import Sequential
+from tensorflow._api.v1.keras.layers import Dense, Dropout, CuDNNLSTM, CuDNNGRU
 
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
@@ -32,7 +33,7 @@ path = activation + '_' + optimizer + '_' + \
 # Réglages Tensorboard
 log_path = config_parser.get('DataPath', 'log_path')
 print("Fichier de log Tensorboard: ", log_path+path)
-tensorboard = TensorBoard(log_path+path)
+tensorboard = TensorBoard(log_dir=log_path+path)
 
 print("Creation du modele...")
 model = Sequential()  # Pile lineaire de couches
@@ -45,7 +46,7 @@ model.add(Dropout(rate=0.2))
 model.add(CuDNNLSTM(units=128))
 model.add(Dropout(rate=0.2))
 
-model.add(Dense(units=5, activation='sigmoid'))
+model.add(Dense(units=y_train.shape[1], activation='sigmoid'))
 
 # Loss the objective that the model will try to minimize
 model.compile(loss='mean_squared_error',
@@ -60,6 +61,7 @@ save_model = ModelCheckpoint(filepath=model_path+path, monitor='val_acc',
                              save_best_only=True)
 print("Modele enregistre: ", model_path+path)
 
-model.fit(x_train, y_train, epochs=int(epochs), shuffle=True, batch_size=1024,
-          validation_data=(x_test, y_test), use_multiprocessing=True,
-          callbacks=[save_model, tensorboard])
+history = model.fit(x_train, y_train, epochs=int(epochs), shuffle=True,
+                    batch_size=1024,
+                    validation_data=(x_test, y_test), use_multiprocessing=True,
+                    callbacks=[save_model, tensorboard])
