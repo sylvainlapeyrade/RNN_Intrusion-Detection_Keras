@@ -62,7 +62,7 @@ csv_values = ['epochs', 'acc', 'loss', 'val_acc', 'val_loss', "train_data",
               'encoder']
 
 results = pd.DataFrame(columns=csv_values)
-results.to_csv('./unit_nb.csv', index=False)
+results.to_csv('./layer_nb.csv', index=False)
 
 # Variables des chemins
 train_data_name = "kddcup.traindata_10_percent_corrected"
@@ -84,10 +84,10 @@ batch_size = 1024
 # batch_size_values = [512, 1024, 2048]
 activation_function = 'sigmoid'
 # activation_function_values = ['sigmoid', 'softmax', 'relu', 'tanh']
-layer_number = 1
-# layer_number_values = [1, 2, 3, 4]
-# unit_number = 128
-unit_number_values = [4, 8, 32, 64, 128, 256]
+# layer_number = 2
+layer_number_values = [1, 2, 3, 4]
+unit_number = 128
+# unit_number_values = [4, 8, 32, 64, 128]
 training_number = 10
 epochs = 100
 loss_function = 'mse'
@@ -95,7 +95,7 @@ cell_type = CuDNNLSTM
 # cell_type_values = [CuDNNLSTM, CuDNNGRU]
 encoder = 'standardscaler'
 # encoder_values = ['standardscaler', 'labelencoder', 'minmaxscaler01',
-# 'minmaxscaler11', 'ordinalencoder']
+             # 'minmaxscaler11', 'ordinalencoder']
 
 # for encoder in encoder_values:
 train_dataframe = pd.read_csv(train_data_path, names=full_features)
@@ -111,9 +111,9 @@ def process_dataframe(dataframe, name, features_number):
 
     def print_data(attack_name, attack_lengh):
         print(' '*6 + attack_name + ': {:,} soit {}%'
-              .format(attack_lengh,
-                      round(attack_lengh * 100 / total_data_length, 3))
-              .replace(',', ' '))
+                .format(attack_lengh,
+                        round(attack_lengh * 100 / total_data_length, 3))
+                .replace(',', ' '))
 
     dataframe['label'] = dataframe['label'].replace('normal.', 1)
     for i in range(len(probe)):
@@ -180,7 +180,6 @@ def process_dataframe(dataframe, name, features_number):
     x = np.array(x)
     return x.reshape([-1, x.shape[1], 1]), y
 
-
 x_train, Y_train = process_dataframe(
     train_dataframe, 'entrainement', four_features)
 x_test, Y_test = process_dataframe(test_dataframe, 'test', four_features)
@@ -200,7 +199,6 @@ def oneHotEncoding(y_label_encoded):
         elif y_label_encoded[i] == 4:
             y_one_hot[i, 4] = 1
     return y_one_hot
-
 
 y_train = oneHotEncoding(Y_train)
 y_test = oneHotEncoding(Y_test)
@@ -235,39 +233,38 @@ def train_model():
         Dense(units=y_train.shape[1], activation=activation_function))
 
     model.compile(loss=loss_function, optimizer=optimizer,
-                  metrics=['accuracy'])
+                    metrics=['accuracy'])
 
     return model.fit(x_train, y_train, epochs=epochs, shuffle=True,
-                     batch_size=batch_size, verbose=2,
-                     validation_data=(x_test, y_test),
-                     use_multiprocessing=True)
-
+                        batch_size=batch_size, verbose=2,
+                        validation_data=(x_test, y_test),
+                        use_multiprocessing=True)
 
 # for dropout_rate in dropout_rate_values:
 # for optimizer in optimizer_values:
 # for batch_size in batch_size_values:
 # for activation_function in activation_function_values:
-# for layer_number in layer_number_values:
-for unit_number in unit_number_values:
+for layer_number in layer_number_values:
+    # for unit_number in unit_number_values:
     for i in range(training_number):
         history = train_model()
         for j in range(epochs):
             results = results.append({'epochs': j,
-                                      'acc':  history.history['acc'][j],
-                                      'loss': history.history['loss'][j],
-                                      'val_acc': history.history['val_acc'][j],
-                                      'val_loss': history.history['val_loss'][j],
-                                      'train_data': train_data,
-                                      'features_nb': x_train.shape[1],
-                                      'loss_fct': loss_function,
-                                      'optimizer': optimizer,
-                                      'activation_fct': activation_function,
-                                      'layer_nb': layer_number,
-                                      'unit_nb': unit_number,
-                                      'batch_size': batch_size,
-                                      'dropout': dropout_rate,
-                                      'cell_type': cell,
-                                      'encoder': encoder},
-                                     ignore_index=True)
-    results.to_csv('./unit_nb.csv', header=False, index=False, mode='a')
+                                        'acc':  history.history['acc'][j],
+                                        'loss': history.history['loss'][j],
+                                        'val_acc': history.history['val_acc'][j],
+                                        'val_loss': history.history['val_loss'][j],
+                                        'train_data': train_data,
+                                        'features_nb': x_train.shape[1],
+                                        'loss_fct': loss_function,
+                                        'optimizer': optimizer,
+                                        'activation_fct': activation_function,
+                                        'layer_nb': layer_number,
+                                        'unit_nb': unit_number,
+                                        'batch_size': batch_size,
+                                        'dropout': dropout_rate,
+                                        'cell_type': cell,
+                                        'encoder': encoder},
+                                        ignore_index=True)
+    results.to_csv('./layer_nb.csv', header=False, index=False, mode='a')
     results = pd.DataFrame(columns=csv_values)

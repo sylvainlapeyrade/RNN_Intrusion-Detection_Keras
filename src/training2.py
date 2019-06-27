@@ -62,7 +62,7 @@ csv_values = ['epochs', 'acc', 'loss', 'val_acc', 'val_loss', "train_data",
               'encoder']
 
 results = pd.DataFrame(columns=csv_values)
-results.to_csv('./unit_nb.csv', index=False)
+results.to_csv('./dropout.csv', index=False)
 
 # Variables des chemins
 train_data_name = "kddcup.traindata_10_percent_corrected"
@@ -76,8 +76,8 @@ test_data_path = "./data/kddcup.testdata_10_percent_corrected"
 # features_number = eight_features
 # features_number = full_features
 # features_values = [four_features, eight_features, full_features]
-dropout_rate = 0.2
-# dropout_rate_values = [0.1, 0.2, 0.3]
+# dropout_rate = 0.2
+dropout_rate_values = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
 optimizer = 'rmsprop'
 # optimizer_values = ['adam', 'sgd', 'rmsprop', 'nadam', 'adamax', 'adadelta']
 batch_size = 1024
@@ -86,8 +86,8 @@ activation_function = 'sigmoid'
 # activation_function_values = ['sigmoid', 'softmax', 'relu', 'tanh']
 layer_number = 1
 # layer_number_values = [1, 2, 3, 4]
-# unit_number = 128
-unit_number_values = [4, 8, 32, 64, 128, 256]
+unit_number = 128
+# unit_number_values = [4, 8, 32, 64, 128]
 training_number = 10
 epochs = 100
 loss_function = 'mse'
@@ -243,12 +243,12 @@ def train_model():
                      use_multiprocessing=True)
 
 
-# for dropout_rate in dropout_rate_values:
-# for optimizer in optimizer_values:
-# for batch_size in batch_size_values:
-# for activation_function in activation_function_values:
-# for layer_number in layer_number_values:
-for unit_number in unit_number_values:
+for dropout_rate in dropout_rate_values:
+    # for optimizer in optimizer_values:
+    # for batch_size in batch_size_values:
+    # for activation_function in activation_function_values:
+    # for layer_number in layer_number_values:
+    # for unit_number in unit_number_values:
     for i in range(training_number):
         history = train_model()
         for j in range(epochs):
@@ -269,5 +269,5 @@ for unit_number in unit_number_values:
                                       'cell_type': cell,
                                       'encoder': encoder},
                                      ignore_index=True)
-    results.to_csv('./unit_nb.csv', header=False, index=False, mode='a')
+    results.to_csv('./dropout.csv', header=False, index=False, mode='a')
     results = pd.DataFrame(columns=csv_values)

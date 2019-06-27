@@ -2,8 +2,7 @@ import configparser as cp
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-import warnings
-warnings.simplefilter(action='ignore')
+pd.options.mode.chained_assignment = None
 
 # Nom et description des features: kdd.ics.uci.edu/databases/kddcup99/task.html
 full_features = ["duration", "protocol_type", "service", "flag", "src_bytes",
@@ -98,15 +97,15 @@ def process_dataframe(dataframe, name, features_number):
     print_data("Entrées anormales", anormal_data_length)
 
     # Assigne numero différent selon la nature de la connexion
-    dataframe.loc[dataframe['label'] == 'normal.', 'label'] = 0
+    dataframe['label'] = dataframe['label'].replace('normal.', 1)
     for i in range(len(probe)):
-        dataframe.loc[dataframe['label'] == probe[i], 'label'] = 1
+        dataframe['label'] = dataframe['label'].replace(probe[i], 1)
     for i in range(len(dos)):
-        dataframe.loc[dataframe['label'] == dos[i], 'label'] = 2
+        dataframe['label'] = dataframe['label'].replace(dos[i], 2)
     for i in range(len(u2r)):
-        dataframe.loc[dataframe['label'] == u2r[i], 'label'] = 3
+        dataframe['label'] = dataframe['label'].replace(u2r[i], 3)
     for i in range(len(r2l)):
-        dataframe.loc[dataframe['label'] == r2l[i], 'label'] = 4
+        dataframe['label'] = dataframe['label'].replace(r2l[i], 4)
 
     # Récupère le nombre de chaque attaque pour afficher des stats
     probe_data_length = len(dataframe[dataframe['label'] == 1])
@@ -126,16 +125,16 @@ def process_dataframe(dataframe, name, features_number):
 
     if 'service' in features_number:
         for i in range(len(service_values)):
-            x.loc[x['service'] == service_values[i], 'service'] = i
+            x['service'] = x['service'].replace(service_values[i], i)
 
     if 'protocol_type' in features_number:
         for i in range(len(protocol_type_values)):
-            x.loc[x['protocol_type'] ==
-                  protocol_type_values[i], 'protocol_type'] = i
+            x['protocol_type'] = x['protocol_type'].replace(
+                protocol_type_values[i], i)
 
     if 'flag' in features_number:
         for i in range(len(flag_values)):
-            x.loc[x['flag'] == flag_values[i], 'flag'] = i
+            x['flag'] = x['flag'].replace(flag_values[i], i)
 
     # Standardise en centrant les données sur la moyenne et l'écart type
     x = StandardScaler().fit_transform(x)
@@ -144,8 +143,8 @@ def process_dataframe(dataframe, name, features_number):
 
 
 x_train, Y_train = process_dataframe(
-    train_dataframe, 'entrainement', eight_features)
-x_test, Y_test = process_dataframe(test_dataframe, 'test', eight_features)
+    train_dataframe, 'entrainement', four_features)
+x_test, Y_test = process_dataframe(test_dataframe, 'test', four_features)
 
 
 def oneHotEncoding(y_label_encoded):
