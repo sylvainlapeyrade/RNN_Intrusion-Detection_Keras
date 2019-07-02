@@ -2,10 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-y = [0.026684, 0.025450, 0.025348, 0.024538, 0.024914, 0.023963]
+y = [0.025248318574737433, 0.02464752507305567,
+     0.024308658393846567, 0.02438319860833089,
+     0.024182257735830732, 0.02460796583872326, 0.024076640178794604]
 x = ['Encodeur', 'Optimiseur', 'Fonction \n d\'activation',
-     'unit_nb', 'layer_nb', 'dropout']
-z = ['Standarscaler', 'rmsprop', 'sigmoid', 128, 1, 0.1]
+     'unit_nb', 'layer_nb', 'dropout', 'taille lot']
+z = ['Standarscaler', 'nadam', 'tanh', 2, 32, 0.2, 512]
 plt.plot(x, y, color='blue')
 plt.title("Évolution du taux de perte en validation")
 plt.ylabel("Taux d'erreur", fontsize=12, color='green')

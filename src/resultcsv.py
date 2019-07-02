@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-value = 'activation_fct'
-name = 'Fonction d\'activation'
+value = 'batch_size'
+name = 'Taille du Lot'
 
 df = pd.read_csv("./results2/"+value+".csv", index_col=False)
 

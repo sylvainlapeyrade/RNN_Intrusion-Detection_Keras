@@ -18,7 +18,7 @@ full_features = ["duration", "protocol_type", "service", "flag", "src_bytes",
                  "dst_host_diff_srv_rate", "dst_host_same_src_port_rate",
                  "dst_host_srv_diff_host_rate", "dst_host_serror_rate",
                  "dst_host_srv_serror_rate", "dst_host_rerror_rate",
-                 "dst_host_srv_rerror_rate", "label"]
+                 "dst_host_srv_rerror_rate", "label", "difficulty"]
 
 # On ne garde que quelques features utiles en accord avec l'article: "Applying
 #  long short-term memory recurrent neural networks to intrusion detection"
@@ -97,7 +97,7 @@ def process_dataframe(dataframe, name, features_number):
     print_data("Entrées anormales", anormal_data_length)
 
     # Assigne numero différent selon la nature de la connexion
-    dataframe['label'] = dataframe['label'].replace('normal.', 1)
+    dataframe['label'] = dataframe['label'].replace('normal.', 0)
     for i in range(len(probe)):
         dataframe['label'] = dataframe['label'].replace(probe[i], 1)
     for i in range(len(dos)):

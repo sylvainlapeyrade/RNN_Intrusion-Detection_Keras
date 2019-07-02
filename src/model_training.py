@@ -39,16 +39,18 @@ model = Sequential()  # Pile lineaire de couches
 # Add : couche qui ajoute des inputs
 # Dropout : randomly set a fraction rate of input units to 0 at
 #  each update during training time, which helps prevent overfitting.
-model.add(CuDNNLSTM(units=128, input_shape=(x_train.shape[1:])))
-model.add(Dropout(rate=0.1))
-# model.add(CuDNNLSTM(units=128))
-# model.add(Dropout(rate=0.1))
+model.add(CuDNNLSTM(units=32, input_shape=(x_train.shape[1:]),
+                    return_sequences=True))
+model.add(Dropout(rate=0.2))
+model.add(CuDNNLSTM(units=32))
+model.add(Dropout(rate=0.2))
 
-model.add(Dense(units=y_train.shape[1], activation='sigmoid'))
+model.add(Dense(units=y_train.shape[1], activation='tanh'))
+
 
 # Loss the objective that the model will try to minimize
 model.compile(loss='mean_squared_error',
-              optimizer='rmsprop', metrics=['accuracy'])
+              optimizer='nadam', metrics=['accuracy'])
 
 print("Entrainement du modele...")
 model.summary()
@@ -60,6 +62,6 @@ save_model = ModelCheckpoint(filepath=model_path+path, monitor='val_acc',
 print("Modele enregistre: ", model_path+path)
 
 history = model.fit(x_train, y_train, epochs=int(epochs), shuffle=True,
-                    batch_size=1024, verbose=2,
+                    batch_size=512, verbose=2,
                     validation_data=(x_test, y_test), use_multiprocessing=True,
                     callbacks=[save_model, tensorboard])
