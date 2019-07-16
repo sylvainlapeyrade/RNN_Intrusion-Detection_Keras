@@ -1,3 +1,0 @@
-epochs,acc,loss,val_acc,val_loss,train_data,features_nb,loss_fct,optimizer,activation_fct,layer_nb,unit_nb,batch_size,dropout,cell_type,encoder
-0,0.9721003770828247,0.009720905565316995,0.9212163686752319,0.029626568438475127,494021,4,mse,rmsprop,sigmoid,1,128,1024,0.2,CuDNNLSTM,labelencoder
-0,0.9667807817459106,0.0112456025830144,0.9218465089797974,0.028351364657899662,494021,4,mse,rmsprop,sigmoid,2,128,1024,0.2,CuDNNLSTM,labelencoder

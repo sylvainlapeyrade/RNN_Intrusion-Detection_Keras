@@ -1,1 +1,3 @@
-{}
+{
+    "python.envFile": "${workspaceRoot}/.env"
+}

@@ -2,7 +2,6 @@ from keras.backend.tensorflow_backend import set_session
 from tensorflow._api.v1.keras.layers import (Dense, Dropout, CuDNNLSTM,
                                              CuDNNGRU, RNN, BatchNormalization)
 from tensorflow._api.v1.keras.models import Sequential
-from tensorflow._api.v1.keras.optimizers import Adam
 from tensorflow._api.v1.keras.callbacks import TensorBoard, ModelCheckpoint
 import tensorflow as tf
 import pandas as pd
@@ -31,19 +30,6 @@ full_features = ["duration", "protocol_type", "service", "flag", "src_bytes",
                  "dst_host_srv_diff_host_rate", "dst_host_serror_rate",
                  "dst_host_srv_serror_rate", "dst_host_rerror_rate",
                  "dst_host_srv_rerror_rate", "label"]
-
-full_features2 = ["duration", "protocol_type", "service", "flag", "src_bytes",
-                  "dst_bytes", "land", "wrong_fragment", "hot",
-                  "num_compromised",
-                  "su_attempted", "num_root",
-                  "num_file_creations",
-                  "is_guest_login",
-                  "count", "srv_count",
-                  "same_srv_rate",
-                  "diff_srv_rate",
-                  "dst_host_srv_diff_host_rate", "dst_host_serror_rate",
-                  "dst_host_rerror_rate",
-                  "label"]
 
 four_features = ['service', 'src_bytes', 'dst_host_diff_srv_rate',
                  'dst_host_rerror_rate', 'label']
@@ -87,7 +73,7 @@ csv_values = ['epochs', 'acc', 'loss', 'val_acc', 'val_loss', "train_data",
 csv_best_res = ['param', 'value', 'min_mean_val_loss']
 
 # ***** REFERENCES PARAMETERS *****
-params = {'epochs': 1000, 'train_data': 494021, 'features_nb': 4,
+params = {'epochs': 100, 'train_data': 125973, 'features_nb': 4,
           'loss_fct': 'mse', 'optimizer': 'nadam',
           'activation_fct': 'sigmoid', 'layer_nb': 2, 'unit_nb': 128,
           'batch_size': 1024, 'dropout': 0.2, 'cell_type': 'CuDNNLSTM',
@@ -105,7 +91,7 @@ params_var = {'encoder': ['standardscaler', 'labelencoder',
               'dropout': [0.1, 0.2, 0.3, 0.4, 0.5],
               'batch_size': [128, 256, 512, 1024, 2048],
               # 'features_nb': [4, 8, 41],
-              # 'train_data': [494021, 4898431, 125973, 25191],
+              # 'train_data': [494021, 4898431, 125973, 25191, 82333],
               # 'cell_type': ['CuDNNLSTM', 'CuDNNGRU', 'RNN'],
               }
 
@@ -114,7 +100,7 @@ min_val_loss = 0.03
 resultstocsv = False
 resultstologs = False
 
-# ***** PATH *****
+# ***** RESULTS CSV *****
 if resultstocsv is True:
     results_path = "./res_lstm2/"
     if not os.path.exists(results_path):
@@ -128,20 +114,25 @@ if resultstocsv is True:
 
 
 def data_processing():
+    data_path = "./data/"
+    # ***** DATA PATH *****
     if params['train_data'] == 494021:
-        train_data_path = "./data/kddcup.traindata_10_percent_corrected.csv"
-        test_data_path = "./data/kddcup.testdata_10_percent_corrected.csv"
+        train_data_path = data_path+"kddcup.traindata_10_percent_corrected.csv"
+        test_data_path = data_path+"kddcup.testdata_10_percent_corrected.csv"
     elif params['train_data'] == 4898431:
-        train_data_path = "./data/kddcup.traindata.corrected.csv"
-        test_data_path = "./data/kddcup.testdata_10_percent_corrected.csv"
+        train_data_path = data_path+"kddcup.traindata.corrected.csv"
+        test_data_path = data_path+"kddcup.testdata_10_percent_corrected.csv"
     elif params['train_data'] == 125973:
-        train_data_path = "./data/KDDTrain+.csv"
-        test_data_path = "./data/KDDTest+.csv"
+        train_data_path = data_path+"KDDTrain+.csv"
+        test_data_path = data_path+"KDDTest+.csv"
         full_features.append("difficulty")
     elif params['train_data'] == 25191:
-        train_data_path = "./data/KDDTrain+_20Percent.csv"
-        test_data_path = "./data/KDDTest+.csv"
+        train_data_path = data_path+"KDDTrain+_20Percent.csv"
+        test_data_path = data_path+"KDDTest+.csv"
         full_features.append("difficulty")
+    elif params['train_data'] == 175342:
+        tarin_data_path = data_path+'UNSW_NB15_training-set.csv'
+        test_data_path = data_path+'UNSW_NB15_testing-set.csv'
 
     train_dataframe = pd.read_csv(train_data_path, names=full_features)
     test_dataframe = pd.read_csv(test_data_path, names=full_features)
