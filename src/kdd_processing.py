@@ -3,7 +3,6 @@ import numpy as np
 from keras.utils import to_categorical
 from sklearn.preprocessing import (StandardScaler, OrdinalEncoder,
                                    LabelEncoder, MinMaxScaler, OneHotEncoder)
-# pd.options.mode.chained_assignment = None
 
 full_features = ["duration", "protocol_type", "service", "flag", "src_bytes",
                  "dst_bytes", "land", "wrong_fragment", "urgent", "hot",
