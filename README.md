@@ -101,4 +101,4 @@ They proposed a solution which will be partially used namely:
 This projet has been inspired by the work "Applying long short-term memory recurrent neural networks to intrusion detection" by RC Staudemeyer - ‎2015 as well as both the repositories from [Jiachuan Deng](https://github.com/JiachuanDENG/KDDCup99_NID_LSTM) and [Edouard Belval](https://github.com/Belval/ML-IDS).
 
 ## License
-[MIT](LICENSE) © [Sylvain Lapeyrade](https://github.com/sylvainlapeyrade)
+[MIT](LICENSE) © [Sylvain Lapeyrade](https://github.com/sylvainlapeyrade) - Project part of my internship at IRIT.
