@@ -108,8 +108,8 @@ venv.bak/
 .vscode/
 
 # perosnal folders
-data/
-logs/
-models/
-results/
+data/*
+logs/*
+models/*
+results/*
 graphs/
