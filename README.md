@@ -1,6 +1,6 @@
 **Project in progress**
 
-# RNN_LSTM_KDD99
+# RNN_Intrusion-Detection_Keras
 This project aims to reproduce the results made by RC Staudemeyer in his article "Applying machine learning principles to the information security field through intelligent intrusion detection systems.".
 
 
