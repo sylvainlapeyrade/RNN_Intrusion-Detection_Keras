@@ -105,11 +105,11 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-.vscode/*
+.vscode/
 
 # perosnal folders
-data/*
-logs/*
-models/*
-results/*
+data/
+logs/
+models/
+results/
 graphs/
