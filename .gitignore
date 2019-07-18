@@ -103,9 +103,11 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# data folder
-data/
+.vscode
 
+# perosnal folders
+data/
 logs/
 models/
 results/
+graphs/

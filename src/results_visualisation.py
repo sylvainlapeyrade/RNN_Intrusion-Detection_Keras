@@ -1,26 +1,23 @@
-from unsw_data_processing import unsw_processing
-from kdd_data_processing import kdd_processing
-from keras.backend.tensorflow_backend import set_session
-import matplotlib.pyplot as plt
-from tensorflow._api.v1.keras.models import load_model
 import numpy as np
 import pandas as pd
-import tensorflow as tf
-from sklearn.preprocessing import (StandardScaler, OrdinalEncoder,
-                                   LabelEncoder, MinMaxScaler)
+from kdd_processing import kdd_encoding
+from unsw_processing import unsw_encoding
+from tensorflow._api.v1.keras.models import load_model
 from sklearn.metrics import (confusion_matrix, roc_auc_score, precision_score,
                              roc_curve, recall_score, auc)
-pd.options.mode.chained_assignment = None
 
+# Allows tensorflow to run multiple sessions (Multiple learning simultaneously)
+# Comment the 4 following lines if causing issues
+import tensorflow as tf
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
-set_session(tf.Session(config=config))
+sess = tf.Session(config=config)
 
 data_path = './data/'
 model_path = './models/'
 
 # ***** REFERENCES PARAMETERS *****
-params = {'train_data': 125973, 'features_nb': 4,
+params = {'train_data': 494021, 'features_nb': 4,
           'batch_size': 1024, 'encoder': 'standarscaler'}
 
 # ***** VARIABLE PARAMETERS *****
@@ -34,19 +31,13 @@ params_var = {'encoder': ['standardscaler', 'labelencoder',
               }
 
 dataset = 'kdd'
-model_name = '125973_4_mse_nadam_sigmoid_1_128_1024_0.2_CuDNNLSTM_standarscaler_1562700465.842936st'
+model_name = '494021_4_mse_nadam_sigmoid_1_128_1024_0.2' + \
+    '_CuDNNLSTM_standardscaler_1563377470.7797422'
 
 if dataset == 'kdd':
-    kdd_processing(params)
+    x_train, x_test, y_train, y_test = kdd_encoding(params)
 elif dataset == 'unsw':
-    unsw_processing(params)
-
-x_train = np.load(data_path + dataset + '_x_train.npy')
-x_train = x_train.reshape([-1, x_train.shape[1], 1])
-y_train = np.load(data_path + dataset + '_y_train.npy')
-x_test = np.load(data_path + dataset + '_x_test.npy')
-x_test = x_test.reshape([-1, x_test.shape[1], 1])
-y_test = np.load(data_path + dataset + '_y_test.npy')
+    x_train, x_test, y_train, y_test = unsw_encoding(params)
 
 model = load_model(model_path+model_name)
 model.summary()
@@ -69,7 +60,7 @@ print(TP/(TP+FN))
 print('\nFPR:')
 print(FP/(FP+TN))
 
-# Matrice de coût tel que présenté dans l'article
+# Cost Matrix as presented in Staudemeyer article
 cost_matrix = [[0, 1, 2, 2, 2],
                [1, 0, 2, 2, 2],
                [2, 1, 0, 2, 2],
