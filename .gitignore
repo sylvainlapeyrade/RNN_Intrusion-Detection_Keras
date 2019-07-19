@@ -108,7 +108,11 @@ venv.bak/
 .vscode/
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # personal folders
+=======
+# perosnal folders
+>>>>>>> 018422918e942ba6fd74929b00bdaaf177849bf3
 =======
 # perosnal folders
 >>>>>>> 018422918e942ba6fd74929b00bdaaf177849bf3
