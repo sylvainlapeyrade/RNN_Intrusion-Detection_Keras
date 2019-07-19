@@ -6,13 +6,16 @@ This project aims to reproduce the results made by RC Staudemeyer in his article
 
 ## Project structure
 ### Required packages:
-- tensorflow (version used: 1.13.1)
-- sklearn (version used: 0.0)  
-- numpy (version used: 1.16.2) 
-- pandas (version used: 0.24.2)
-- Jupyter (version used: 1.0.0)
-- configparser (version used: 3.7.4)
-.... [To be completed]
+Packages with the version used (tensorflow-gpu is only mandatory for gpu training):
+scikit-learn==0.21.2  
+numpy==1.16.4
+pandas==0.25.0
+Keras==2.2.4
+tensorflow==1.14.0
+tensorboard==1.14.0
+tensorflow-gpu==1.14.0
+
+See [requirements.txt](requirements.txt)
 
 ### Directory structure:
 [To be completed]
