@@ -1,3 +1,5 @@
+.gitignore
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -102,3 +104,16 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+.vscode/
+
+<<<<<<< HEAD
+# personal folders
+=======
+# perosnal folders
+>>>>>>> 018422918e942ba6fd74929b00bdaaf177849bf3
+data/
+logs/
+models/
+results/
+graphs/
