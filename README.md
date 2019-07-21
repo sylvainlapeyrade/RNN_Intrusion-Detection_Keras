@@ -7,7 +7,7 @@ Then it proposes to compare the performance of several Recurrent Neural Networks
     ```
     git clone https://github.com/sylvainlapeyrade/RNN_Intrusion-Detection_Keras.git
     ```
-2. Making sure the dependencies are met:  
+2. Make sure the dependencies are met:  
     ```
     pip install -r requirements.txt
     ```
@@ -15,20 +15,21 @@ Then it proposes to compare the performance of several Recurrent Neural Networks
 See [Data](#Data) and [Directory structure](#Directory-structure) for more information and links. *The names of the datasets must be the same as in the processing files.*  
 
 4. Set the parameters for the training or let them by default.
-5. Move the RNN_Intrusion-Detection_Keras folder and run:  
-    To train with Recurrent Neural Networks:
+
+5. Move the RNN_Intrusion-Detection_Keras folder:  
+    To train with Recurrent Neural Networks, run:
     ```
     python3 ./src/training_rnn.py 
     ```
-    To train with classifiers:
+    To train with classifiers, run:
     ```
     python3 ./src/training_classifier.py
     ```
-    To view the results:
+    To view the results, run:
     ```
     python3 ./src/results_visualisation.py
     ```
-    *On linux use: `python3 path_to_file` and on windows: `python3 path_to_file`*  
+    *On linux use: `python3 path_to_file` and on windows use: `python3 path_to_file`*  
 
 ## Project structure
 ### Required packages:
