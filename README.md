@@ -1,6 +1,6 @@
 # RNN_Intrusion-Detection_Keras
 This project aims primarly to reproduce the results made by RC Staudemeyer in his article "Applying machine learning principles to the information security field through intelligent intrusion detection systems.".  
-Then it proposes to compare the performance of several Recurrent Neural Networks and Classifier on the KDD CUP'99, NSL KDD and UNSW NB-15 datasets.
+Then it proposes to compare the performance of several Recurrent Neural Networks and Classifiers on the KDD CUP'99, NSL KDD and UNSW NB-15 datasets.
 
 ## Usage
 1. **Download the code:** 
@@ -23,7 +23,7 @@ See [Data](#Data) and [Directory structure](#Directory-structure) for more infor
     ```
     python3 ./src/training_rnn.py 
     ```
-    To train with classifiers, run:
+    To train with Classifiers, run:
     ```
     python3 ./src/training_classifier.py
     ```
