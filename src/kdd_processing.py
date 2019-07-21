@@ -70,11 +70,11 @@ def kdd_encoding(params):
     data_path = "./data/"
     # 10% kdd99 train + kdd99 test datasets
     if params['train_data'] == 494021:
-        train_data_path = data_path+"kddcup_traindata_10_percent_corrected.csv"
+        train_data_path = data_path+"kddcup_traindata_10_percent.csv"
         test_data_path = data_path + "kddcup_testdata_corrected.csv"
     # Full kdd99 train + kdd99 test datasets
     elif params['train_data'] == 4898431:
-        train_data_path = data_path+"kddcup_traindata.corrected.csv"
+        train_data_path = data_path+"kddcup_traindata.csv"
         test_data_path = data_path+"kddcup_testdata_corrected.csv"
     else:
         # Full NSL kdd train + NSL kdd test datasets
