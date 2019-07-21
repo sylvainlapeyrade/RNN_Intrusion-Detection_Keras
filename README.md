@@ -12,11 +12,13 @@ Then it proposes to compare the performance of several Recurrent Neural Networks
     pip install -r requirements.txt
     ```
 3. Download the datasets needed:  
-See [Data](#Data) and [Directory structure](#Directory-structure) for more information and links. *The names of the datasets must be the same as in the processing files.*  
+See [Data](#Data) and [Directory structure](#Directory-structure) for more information and links.
+*The names of the datasets must be the same as in the processing files.*  
 
 4. Set the parameters for the training or let them by default.
 
-5. Move the RNN_Intrusion-Detection_Keras folder:  
+5. Move the RNN_Intrusion-Detection_Keras folder: 
+    
     To train with Recurrent Neural Networks, run:
     ```
     python3 ./src/training_rnn.py 
