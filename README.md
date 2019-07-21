@@ -3,21 +3,21 @@ This project aims primarly to reproduce the results made by RC Staudemeyer in hi
 Then it proposes to compare the performance of several Recurrent Neural Networks and Classifier on the KDD CUP'99, NSL KDD and UNSW NB-15 datasets.
 
 ## Usage
-1. Download the code:  
+1. **Download the code:** 
     ```
     git clone https://github.com/sylvainlapeyrade/RNN_Intrusion-Detection_Keras.git
     ```
-2. Make sure the dependencies are met:  
+2. **Make sure the dependencies are met:** 
     ```
     pip install -r requirements.txt
     ```
-3. Download the datasets needed:  
+3. **Download the datasets needed:**  
 See [Data](#Data) and [Directory structure](#Directory-structure) for more information and links.
 *The names of the datasets must be the same as in the processing files.*  
 
-4. Set the parameters for the training or let them by default.
+4. **Set the parameters for the training or let them by default.**
 
-5. Move the RNN_Intrusion-Detection_Keras folder: 
+5. **Move the RNN_Intrusion-Detection_Keras folder:** 
     
     To train with Recurrent Neural Networks, run:
     ```
