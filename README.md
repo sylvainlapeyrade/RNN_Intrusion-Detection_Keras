@@ -1,6 +1,6 @@
 # RNN_Intrusion-Detection_Keras
 This project aims primarly to reproduce the results made by RC Staudemeyer in his article "Applying machine learning principles to the information security field through intelligent intrusion detection systems.".  
-Then it proposes to compare the performance of several Recurrent Neural Networks and Classifier on the KDD CUP'99, NSL KDD and UNSW 15 datasets.
+Then it proposes to compare the performance of several Recurrent Neural Networks and Classifier on the KDD CUP'99, NSL KDD and UNSW NB-15 datasets.
 
 ## Usage
 1. Download the code:  
@@ -70,8 +70,8 @@ See [requirements.txt](requirements.txt)
 ## Data
 The project works with 3 differents datasets (although more could be tested) :
 * [KDD Cup'99](https://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html) (1999).
-* [UBSW-NB15](https://www.unsw.adfa.edu.au/unsw-canberra-cyber/cybersecurity/ADFA-NB15-Datasets/)
-* [NSL-KDD](https://www.unb.ca/cic/datasets/nsl.html)
+* [NSL-KDD](https://www.unb.ca/cic/datasets/nsl.html)(2009).
+* [UBSW-NB15](https://www.unsw.adfa.edu.au/unsw-canberra-cyber/cybersecurity/ADFA-NB15-Datasets/) (2015).
 
 ## References
 This projet has been inspired by the the following article : "Applying long short-term memory recurrent neural networks to intrusion detection" by RC Staudemeyer - ‎2015.
