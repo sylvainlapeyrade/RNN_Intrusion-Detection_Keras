@@ -1,22 +1,21 @@
-import tensorflow as tf
+import tensorflow
 import pandas as pd
 import numpy as np
 import os
 from time import time
-from tensorflow._api.v1.keras.layers import (Dense, Dropout, CuDNNLSTM,
-                                             CuDNNGRU, RNN, LSTM)
-from tensorflow._api.v1.keras import Sequential
-from tensorflow._api.v1.keras.callbacks import TensorBoard, ModelCheckpoint
+from keras.layers import Dense, Dropout, CuDNNLSTM, CuDNNGRU, RNN, LSTM, GRU
+from keras import Sequential
+from keras.callbacks import TensorBoard, ModelCheckpoint
 
 from kdd_processing import kdd_encoding
 from unsw_processing import unsw_encoding
 from results_visualisation import print_results
 
 # Allows tensorflow to run multiple sessions (Multiple learning simultaneously)
-# Comment the 4 following lines if causing issues
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True
-sess = tf.Session(config=config)
+# Comment the 3 following lines if causing issues
+# config = tensorflow.ConfigProto()
+# config.gpu_options.allow_growth = True
+# sess = tensorflow.Session(config=config)
 
 csv_values = ['epochs', 'acc', 'loss', 'val_acc', 'val_loss', "train_data",
               "features_nb", 'loss_fct', 'optimizer', 'activation_fct',
@@ -25,13 +24,33 @@ csv_values = ['epochs', 'acc', 'loss', 'val_acc', 'val_loss', "train_data",
 
 csv_best_res = ['param', 'value', 'min_mean_val_loss']
 
+# epochs: Number of iteration of the training dataset
+# train_data: Number of rows in training dataset (see processing files)
+# features_nb: Number of features kept as input (see processing files)
+# loss fct: Loss function used in training
+# optimizer: Optimizer used in training
+# activation_fct: Activation function used in outputs layer
+# layer_nb: Number of hidden layers in the network
+# unit_nb: Number of cells for each layer
+# batch_size: Number of elements observed before updating weights
+# dropout: Fraction of inputs randomly discarded
+# cell_type: Type of cell ['CuDNNLSTM', 'CuDNNGRU', 'RNN', 'LSTM', 'GRU']
+# encoder: Encoding performed (see processing files)
+# dataset: Processing file to be called ['kdd', 'unsw']
+# training_nb: Number of model to be trained with the same params
+# resultstocsv: Wether to save results to csv
+# resultstologs: Wether to save models and tensorboard logs
+# showresults: Wether to show detailled statistics about the trained model
+# shuffle: Wether to shuffle the batches sequences during training
+
 # ***** REFERENCES PARAMETERS *****
-params = {'epochs': 2, 'train_data': 494021, 'features_nb': 4,
+params = {'epochs': 3, 'train_data': 494021, 'features_nb': 4,
           'loss_fct': 'mse', 'optimizer': 'rmsprop',
           'activation_fct': 'sigmoid', 'layer_nb': 1, 'unit_nb': 128,
           'batch_size': 1024, 'dropout': 0.2, 'cell_type': 'CuDNNLSTM',
           'encoder': 'labelencoder', 'dataset': 'kdd', 'training_nb': 1,
-          'resultstocsv': True, 'resultstologs': False, 'showresults': False}
+          'resultstocsv': False, 'resultstologs': False, 'showresults': True,
+          'shuffle': True}
 
 # ***** VARIABLE PARAMETERS *****
 params_var = {'encoder': ['standardscaler', 'labelencoder',
@@ -46,13 +65,13 @@ params_var = {'encoder': ['standardscaler', 'labelencoder',
               'batch_size': [512, 1024, 2048],
               # 'features_nb': [4, 8, 41],
               # 'train_data': [494021, 4898431, 125973, 25191],
-              # 'cell_type': ['CuDNNLSTM', 'CuDNNGRU', 'RNN', 'LSTM],
+              # 'cell_type': ['CuDNNLSTM', 'CuDNNGRU', 'RNN', 'LSTM', 'GRU'],
               # 'dataset : ['kdd', 'unsw']
               }
 
 model_path = './models/'
 logs_path = './logs/'
-res_path = "./results/" + 'testcsv/'
+res_path = './results/' + 'testcsv/'
 
 if params['resultstologs'] is True:
     res_name = str(params['train_data']) + '_' + str(params['features_nb']) +\
@@ -63,13 +82,20 @@ if params['resultstologs'] is True:
         params['encoder'] + '_' + str(time())
 
 
+# Encode dataset and return : x_train, x_test, y_train, y_tests
 def load_data():
     if params['dataset'] == 'kdd':
-        return kdd_encoding(params)
+        x_train, x_test, y_train, y_test = kdd_encoding(params)
     elif params['dataset'] == 'unsw':
-        return unsw_encoding(params)
+        x_train, x_test, y_train, y_test = unsw_encoding(params)
+
+    # Reshape the inputs in the accepted model format
+    x_train = np.array(x_train).reshape([-1, x_train.shape[1], 1])
+    x_test = np.array(x_test).reshape([-1, x_test.shape[1], 1])
+    return x_train, x_test, y_train, y_test
 
 
+# Create and train a model
 def train_model(x_train, x_test, y_train, y_test):
     if params['cell_type'] == 'CuDNNLSTM':
         cell = CuDNNLSTM
@@ -79,26 +105,32 @@ def train_model(x_train, x_test, y_train, y_test):
         cell = RNN
     elif params['cell_type'] == 'LSTM':
         cell = LSTM
+    elif params['cell_type'] == 'GRU':
+        cell = GRU
 
+    # Create a Sequential layer, one layer after the other
     model = Sequential()
+    # If there is more than 1 layer, the first must return sequences
     for _ in range(params['layer_nb']-1):
         model.add(cell(units=params['unit_nb'],
                        input_shape=(x_train.shape[1:]), return_sequences=True))
         model.add(Dropout(rate=params['dropout']))
 
+    # If there is only 1 layer, it must not return sequences
     if(params['layer_nb'] == 1):
         model.add(cell(units=params['unit_nb'], input_shape=x_train.shape[1:]))
         model.add(Dropout(rate=params['dropout']))
-    else:
+    else:  # If there is more than 1, the following must not return sequences
         model.add(cell(units=params['unit_nb']))
         model.add(Dropout(rate=params['dropout']))
-
+    # Outputs layer
     model.add(Dense(units=y_train.shape[1],
                     activation=params['activation_fct']))
 
     model.compile(loss=params['loss_fct'], optimizer=params['optimizer'],
                   metrics=['accuracy'])
 
+    # Create model and logs folder if does not exist
     if params['resultstologs'] is True:
         if not os.path.exists(logs_path):
             os.makedirs(logs_path)
@@ -115,8 +147,8 @@ def train_model(x_train, x_test, y_train, y_test):
     model.summary()
 
     hist = model.fit(x_train, y_train, params['batch_size'], params['epochs'],
-                     verbose=2, shuffle=True, validation_data=(x_test, y_test),
-                     callbacks=callbacks)
+                     verbose=1, shuffle=params['shuffle'],
+                     validation_data=(x_test, y_test), callbacks=callbacks)
 
     if params['showresults'] is True:
         print_results(params, model, x_train, x_test, y_train, y_test)
@@ -180,7 +212,7 @@ def res_to_csv():
 
     for feature in params_var.keys():
         results_df.to_csv(res_path + feature + ".csv", index=False)
-        save_feature = params[feature]
+        save_feature_value = params[feature]
 
         for feature_value in params_var[feature]:
             df_value = pd.DataFrame(columns=csv_values)
@@ -210,7 +242,7 @@ def res_to_csv():
             params[feature] = feature_value_min_loss
             ref_min_val_loss = min_mean_loss
         else:
-            params[feature] = save_feature
+            params[feature] = save_feature_value
 
         # Save the best feature value, reference is saved if better
         best_res_df = best_res_df.append({'param': feature,

@@ -93,8 +93,4 @@ def unsw_encoding(params):
     y_train = to_categorical(Y_train)
     y_test = to_categorical(Y_test)
 
-    # Reshape the inputs in the accepted model format
-    x_train = np.array(x_train).reshape([-1, x_train.shape[1], 1])
-    x_test = np.array(x_test).reshape([-1, x_test.shape[1], 1])
-
     return x_train, x_test, y_train, y_test
