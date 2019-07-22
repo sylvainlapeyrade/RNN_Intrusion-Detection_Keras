@@ -72,7 +72,7 @@ See [requirements.txt](requirements.txt)
 ## Data
 The project works with 3 differents datasets (although more could be tested) :
 * [KDD Cup'99](https://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html) (1999).
-* [NSL-KDD](https://www.unb.ca/cic/datasets/nsl.html)(2009).
+* [NSL-KDD](https://www.unb.ca/cic/datasets/nsl.html) (2009).
 * [UBSW-NB15](https://www.unsw.adfa.edu.au/unsw-canberra-cyber/cybersecurity/ADFA-NB15-Datasets/) (2015).
 
 ## References
