@@ -44,8 +44,6 @@ Packages with the version used (tensorflow-gpu is only mandatory for gpu trainin
 * `tensorboard==1.14.0`
 * `tensorflow-gpu==1.14.0`
 
-See [requirements.txt](requirements.txt)
-
 ### Directory structure:
 * RNN_Intrusion-Detection_Keras
     * data
