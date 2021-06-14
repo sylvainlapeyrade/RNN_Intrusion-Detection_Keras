@@ -50,18 +50,17 @@ Packages with the version used (tensorflow-gpu is only mandatory for gpu trainin
         * [kddcup_traindata_10_percent.csv](http://kdd.ics.uci.edu/databases/kddcup99/kddcup.data_10_percent.gz) - 46 145 Ko
         * [kddcup_traindata.csv](http://kdd.ics.uci.edu/databases/kddcup99/kddcup.data.gz) - 725 176 Ko
         * [kddcup_testdata_corrected.csv](http://kdd.ics.uci.edu/databases/kddcup99/corrected.gz) - 73 135 Ko
-        * [KDDTest+.csv](https://iscxdownloads.cs.unb.ca/iscxdownloads/NSL-KDD/NSL-KDD.zip) - 3 361 Ko
-        * [KDDTest-21.csv](https://iscxdownloads.cs.unb.ca/iscxdownloads/NSL-KDD/NSL-KDD.zip) - 1 772 Ko
-        * [KDDTrain+.csv](https://iscxdownloads.cs.unb.ca/iscxdownloads/NSL-KDD/NSL-KDD.zip) - 18 662 Ko
-        * [KDDTrain+_20Percent.csv](https://iscxdownloads.cs.unb.ca/iscxdownloads/NSL-KDD/NSL-KDD.zip) - 3 733 Ko
-        * [UNSW_NB15_testing-set.csv](https://www.unsw.adfa.edu.au/unsw-canberra-cyber/cybersecurity/ADFA-NB15-Datasets/a%20part%20of%20training%20and%20testing%20set/UNSW_NB15_training-set.csv) - 15 021 Ko
-        * [UNSW_NB15_training-set.csv](https://www.unsw.adfa.edu.au/unsw-canberra-cyber/cybersecurity/ADFA-NB15-Datasets/a%20part%20of%20training%20and%20testing%20set/UNSW_NB15_testing-set.csv) - 31 537 Ko
+        * [KDDTest+.csv](https://www.unb.ca/cic/datasets/nsl.html) - 3 361 Ko
+        * [KDDTest-21.csv](https://www.unb.ca/cic/datasets/nsl.html) - 1 772 Ko
+        * [KDDTrain+.csv](https://www.unb.ca/cic/datasets/nsl.html) - 18 662 Ko
+        * [KDDTrain+_20Percent.csv](https://www.unb.ca/cic/datasets/nsl.html) - 3 733 Ko
+        * [UNSW_NB15_testing-set.csv](https://research.unsw.edu.au/projects/unsw-nb15-dataset) - 15 021 Ko
+        * [UNSW_NB15_training-set.csv](https://research.unsw.edu.au/projects/unsw-nb15-dataset) - 31 537 Ko
     * logs
     * models
     * results
     * src
         * [kdd_processing.py](src/kdd_processing.py)
-        * [dataprocessing.py](src/dataprocessing.py)
         * [results_visualisation.py](src/results_visualisation.py)
         * [training_classifier.py](src/training_classifier.py)
         * [training_rnn.py](src/training_rnn.py)
