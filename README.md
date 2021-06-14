@@ -47,9 +47,9 @@ Packages with the version used (tensorflow-gpu is only mandatory for gpu trainin
 ### Directory structure:
 * RNN_Intrusion-Detection_Keras
     * data
-        * [kddcup_traindata_10_percent.csv](http://kdd.ics.uci.edu/databases/kddcup99/kddcup.data_10_percent.gz) - 46 145 Ko
-        * [kddcup_traindata.csv](http://kdd.ics.uci.edu/databases/kddcup99/kddcup.data.gz) - 725 176 Ko
-        * [kddcup_testdata_corrected.csv](http://kdd.ics.uci.edu/databases/kddcup99/corrected.gz) - 73 135 Ko
+        * [kddcup_traindata_10_percent.csv](http://kdd.ics.uci.edu/databases/kddcup99/) - 46 145 Ko
+        * [kddcup_traindata.csv](http://kdd.ics.uci.edu/databases/kddcup99/) - 725 176 Ko
+        * [kddcup_testdata_corrected.csv](http://kdd.ics.uci.edu/databases/kddcup99/) - 73 135 Ko
         * [KDDTest+.csv](https://www.unb.ca/cic/datasets/nsl.html) - 3 361 Ko
         * [KDDTest-21.csv](https://www.unb.ca/cic/datasets/nsl.html) - 1 772 Ko
         * [KDDTrain+.csv](https://www.unb.ca/cic/datasets/nsl.html) - 18 662 Ko
