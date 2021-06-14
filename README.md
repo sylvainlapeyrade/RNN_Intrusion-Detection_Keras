@@ -60,12 +60,12 @@ Packages with the version used (tensorflow-gpu is only mandatory for gpu trainin
     * models
     * results
     * src
-        * [kdd_processing.py](../src/kdd_processing.py)
-        * [dataprocessing.py](../src/dataprocessing.py)
-        * [results_visualisation.py](../src/results_visualisation.py)
-        * [training_classifier.py](../src/training_classifier.py)
-        * [training_rnn.py](../src/training_rnn.py)
-        * [unsw_processing.py](../src/unsw_processing.py)
+        * [kdd_processing.py](src/kdd_processing.py)
+        * [dataprocessing.py](src/dataprocessing.py)
+        * [results_visualisation.py](src/results_visualisation.py)
+        * [training_classifier.py](src/training_classifier.py)
+        * [training_rnn.py](src/training_rnn.py)
+        * [unsw_processing.py](src/unsw_processing.py)
 
 ## Data
 The project works with 3 differents datasets (although more could be tested) :
